@@ -69,7 +69,7 @@
         </table>
         <h2>
             <c:out value="${message}"/>
-        </h2>
+        </h2><%----%>
     </form>
 </div>
 </body>
