@@ -1,23 +1,17 @@
 package dao;
 
+import dao.factories.DAOHibernateFactory;
 import models.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
-import util.DBHelper;
 
 import java.util.List;
 
 public class UserHibernateDAO implements UserDAO {
     private static UserHibernateDAO userHibernateDAO;
-    private SessionFactory sessionFactory;
 
     private UserHibernateDAO() {
-        sessionFactory = createSessionFactory();
     }
 
     public static UserHibernateDAO getInstance() {
@@ -27,17 +21,13 @@ public class UserHibernateDAO implements UserDAO {
         return userHibernateDAO;
     }
 
-    private SessionFactory createSessionFactory() {
-        Configuration configuration = DBHelper.getInstance().getConfiguration();
-        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
-        builder.applySettings(configuration.getProperties());
-        ServiceRegistry serviceRegistry = builder.build();
-        return configuration.buildSessionFactory(serviceRegistry);
+    private Session getSession(){
+      return DAOHibernateFactory.getSession();
     }
 
     @Override
     public List<User> getAllUser() {
-        Session session = sessionFactory.openSession();
+        Session session = getSession();
         List<User> userList = session.createQuery("FROM User").list();
         session.close();
         return userList;
@@ -45,7 +35,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public boolean addUser(User user) {
-        Session session = sessionFactory.openSession();
+        Session session = getSession();
         Transaction transaction = session.beginTransaction();
         long id = (long) session.save(user);
         transaction.commit();
@@ -55,7 +45,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public boolean deleteUserByID(long id) {
-        Session session = sessionFactory.openSession();
+        Session session = getSession();
         Transaction transaction = session.beginTransaction();
         Query query = session.createQuery("DELETE FROM User WHERE id=:paramID");
         query.setParameter("paramID", id);
@@ -67,7 +57,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public User getUserByID(long id) {
-        Session session = sessionFactory.openSession();
+        Session session = getSession();
         Query query = session.createQuery("FROM User WHERE id=:paramID");
         query.setParameter("paramID", id);
         User user = (User) query.uniqueResult();
@@ -78,7 +68,7 @@ public class UserHibernateDAO implements UserDAO {
     @Override
     public boolean updateUser(User user) {
         boolean result = false;
-        Session session = sessionFactory.openSession();
+        Session session = getSession();
         Transaction transaction = session.beginTransaction();
         try {
             session.update(user);
@@ -93,7 +83,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public User getUserByEmailAndPassword(String email, String password) {
-        Session session = sessionFactory.openSession();
+        Session session = getSession();
         Query query = session.createQuery("FROM User WHERE email=:paramEmail AND password=:paramPassword ");
         query.setParameter("paramEmail", email);
         query.setParameter("paramPassword", password);
@@ -105,7 +95,7 @@ public class UserHibernateDAO implements UserDAO {
     @Override
     public boolean validationUser(String email, String password) {
         boolean result = false;
-        Session session = sessionFactory.openSession();
+        Session session = getSession();
         Query query = session.createQuery("FROM User WHERE email=:paramEmail");
         query.setParameter("paramEmail", email);
         User user = (User) query.uniqueResult();

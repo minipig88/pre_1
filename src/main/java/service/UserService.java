@@ -1,7 +1,9 @@
 package service;
 
 
+import dao.UserDAO;
 import dao.UserHibernateDAO;
+import dao.factories.DAOFactory;
 import models.User;
 
 import java.util.List;
@@ -19,8 +21,8 @@ public class UserService {
         return userService;
     }
 
-    private UserHibernateDAO getUserDAO() {
-        return UserHibernateDAO.getInstance();
+    private UserDAO getUserDAO() {
+        return DAOFactory.getDAOFactory().getUserDao();
     }
 
     public List<User> getAllUser() {

@@ -1,7 +1,7 @@
 package dao;
 
+import dao.factories.DAOJDBCFactory;
 import models.User;
-import util.DBHelper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class UserJdbcDAO implements UserDAO {
     }
 
     private Connection getConnection() {
-        return DBHelper.getInstance().getConnection();
+        return DAOJDBCFactory.getConnection();
     }
 
     @Override
