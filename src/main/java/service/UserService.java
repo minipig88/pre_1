@@ -1,7 +1,7 @@
 package service;
 
 
-import dao.UserJdbcDAO;
+import dao.UserHibernateDAO;
 import models.User;
 
 import java.util.List;
@@ -19,8 +19,8 @@ public class UserService {
         return userService;
     }
 
-    private UserJdbcDAO getUserDAO() {
-        return UserJdbcDAO.getInstance();
+    private UserHibernateDAO getUserDAO() {
+        return UserHibernateDAO.getInstance();
     }
 
     public List<User> getAllUser() {

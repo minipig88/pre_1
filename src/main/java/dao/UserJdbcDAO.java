@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserJdbcDAO {
+public class UserJdbcDAO implements UserDAO {
     private static UserJdbcDAO userJdbcDAO;
 
     private UserJdbcDAO() {
@@ -25,6 +25,7 @@ public class UserJdbcDAO {
         return DBHelper.getInstance().getConnection();
     }
 
+    @Override
     public List<User> getAllUser() {
         List<User> list = new ArrayList<>();
         try (Connection connection = getConnection();
@@ -44,6 +45,7 @@ public class UserJdbcDAO {
         return list;
     }
 
+    @Override
     public boolean addUser(User user) {
         boolean result = false;
         try (Connection connection = getConnection();
@@ -61,6 +63,7 @@ public class UserJdbcDAO {
         return result;
     }
 
+    @Override
     public boolean deleteUserByID(long id) {
         boolean result = false;
         try (Connection connection = getConnection();
@@ -74,6 +77,7 @@ public class UserJdbcDAO {
         return result;
     }
 
+    @Override
     public User getUserByID(long id) {
         User user = null;
         try (Connection connection = getConnection();
@@ -95,6 +99,7 @@ public class UserJdbcDAO {
         return user;
     }
 
+    @Override
     public boolean updateUser(User user) {
         boolean result = false;
         try (Connection connection = getConnection();
@@ -112,6 +117,7 @@ public class UserJdbcDAO {
         return result;
     }
 
+    @Override
     public User getUserByEmailAndPassword(String email, String password) {
         User user = null;
         try (Connection connection = getConnection();
@@ -133,6 +139,7 @@ public class UserJdbcDAO {
         return user;
     }
 
+    @Override
     public boolean validationUser(String email, String password) {
         boolean result = false;
         try (Connection connection = getConnection();
