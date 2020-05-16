@@ -55,7 +55,6 @@
                 </td>
             </tr>
             <tr>
-            <tr>
                 <th>Password:</th>
                 <td>
                     <input type="text" name="password" size="15"
@@ -64,6 +63,16 @@
                 </td>
             </tr>
             <tr>
+                <th>Role:</th>
+                <td>
+                    <p><select name="role">
+                        <optgroup label="Role">
+                            <option value="admin">Admin</option>
+                            <option value="user" selected>User</option>
+                        </optgroup>
+                    </select></p>
+                </td>
+            </tr>
             <tr>
                 <td colspan="2" align="center">
                     <input type="submit" value="Save"/>

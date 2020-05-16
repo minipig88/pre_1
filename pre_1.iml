@@ -4,7 +4,9 @@
     <facet type="jpa" name="JPA">
       <configuration>
         <setting name="validation-enabled" value="true" />
-        <datasource-mapping />
+        <datasource-mapping>
+          <factory-entry name="pre_1" value="430e01dd-a273-43f0-903d-09d173dcad2f" />
+        </datasource-mapping>
         <naming-strategy-map />
       </configuration>
     </facet>

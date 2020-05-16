@@ -2,7 +2,6 @@ package service;
 
 
 import dao.UserDAO;
-import dao.UserHibernateDAO;
 import dao.factories.DAOFactory;
 import models.User;
 

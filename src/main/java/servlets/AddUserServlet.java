@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @WebServlet("/admin/new")
@@ -27,11 +29,12 @@ public class AddUserServlet extends HttpServlet {
         String secondName = req.getParameter("secondName");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
+        String role = req.getParameter("role");
 
         resp.setContentType("text/html;charset=utf-8");
-        if (firstName != null && secondName != null && email != null && password != null &&
+        if (firstName != null && secondName != null && email != null && password != null && role != null &&
                 !firstName.isBlank() && !secondName.isBlank() && !email.isBlank() && !password.isBlank()) {
-            if (userService.addUser(new User(firstName, secondName, email, password))) {
+            if (userService.addUser(new User(firstName, secondName, email, password, role ))) {
                 resp.setStatus(HttpServletResponse.SC_CREATED);
                 resp.sendRedirect("/admin/list");
             } else {

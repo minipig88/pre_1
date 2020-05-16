@@ -33,11 +33,12 @@ public class EditUserServlet extends HttpServlet {
         String secondName = req.getParameter("secondName");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
+        String role = req.getParameter("role");
 
         resp.setContentType("text/html;charset=utf-8");
-        if (firstName != null && secondName != null && email != null && id > 0 && password != null &&
+        if (firstName != null && secondName != null && email != null && id > 0 && password != null && role != null &&
                 !firstName.isBlank() && !secondName.isBlank() && !email.isBlank() && !password.isBlank()) {
-            if (userService.updateUser(new User(id, firstName, secondName, email, password))) {
+            if (userService.updateUser(new User(id, firstName, secondName, email, password, role))) {
                 resp.setStatus(HttpServletResponse.SC_CREATED);
                 resp.sendRedirect("/admin/list");
             } else {

@@ -62,6 +62,17 @@
                     />
                 </td>
             </tr>
+            <tr>
+                <th>Role:</th>
+                <td>
+                    <p><select name="role">
+                        <optgroup label="Role">
+                        <option value="admin">Admin</option>
+                        <option value="user" selected>User</option>
+                        </optgroup>
+                    </select></p>
+                </td>
+            </tr>
             <td colspan="2" align="center">
                 <input type="submit" value="Save"/>
             </td>

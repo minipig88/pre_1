@@ -1,6 +1,5 @@
 package dao;
 
-import dao.factories.DAOJDBCFactory;
 import models.User;
 
 import java.sql.*;
@@ -10,26 +9,29 @@ import java.util.List;
 
 public class UserJdbcDAO implements UserDAO {
     private static UserJdbcDAO userJdbcDAO;
+    private Connection connection;
 
-    private UserJdbcDAO() {
+    private UserJdbcDAO(Connection connection) {
+        this.connection = connection;
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static UserJdbcDAO getInstance() {
+    public static UserJdbcDAO getInstance(Connection connection) {
         if (userJdbcDAO == null) {
-            userJdbcDAO = new UserJdbcDAO();
+            userJdbcDAO = new UserJdbcDAO(connection);
         }
         return userJdbcDAO;
     }
 
-    private Connection getConnection() {
-        return DAOJDBCFactory.getConnection();
-    }
 
     @Override
     public List<User> getAllUser() {
         List<User> list = new ArrayList<>();
-        try (Connection connection = getConnection();
-             Statement statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM user_table");
             while (resultSet.next()) {
                 list.add(new User(
@@ -37,8 +39,11 @@ public class UserJdbcDAO implements UserDAO {
                         resultSet.getString("firstName"),
                         resultSet.getString("secondName"),
                         resultSet.getString("email"),
-                        resultSet.getString("password")));
+                        resultSet.getString("password"),
+                        resultSet.getString("role")));
+
             }
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,15 +53,16 @@ public class UserJdbcDAO implements UserDAO {
     @Override
     public boolean addUser(User user) {
         boolean result = false;
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
+        try (PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO user_table " +
-                             "(firstName, secondName, email, password) VALUES (?, ?, ?, ?)")) {
+                             "(firstName, secondName, email, password, role) VALUES (?, ?, ?, ?, ?)")) {
             statement.setString(1, user.getFirstName());
             statement.setString(2, user.getSecondName());
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getPassword());
+            statement.setString(5, user.getRole());
             result = statement.executeUpdate() == 1;
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -66,11 +72,11 @@ public class UserJdbcDAO implements UserDAO {
     @Override
     public boolean deleteUserByID(long id) {
         boolean result = false;
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
+        try (PreparedStatement statement = connection.prepareStatement(
                      "DELETE FROM user_table WHERE id = ?")) {
             statement.setLong(1, id);
             result = statement.executeUpdate() == 1;
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -80,8 +86,7 @@ public class UserJdbcDAO implements UserDAO {
     @Override
     public User getUserByID(long id) {
         User user = null;
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
+        try (PreparedStatement statement = connection.prepareStatement(
                      "SELECT * FROM user_table WHERE id = ?")) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -91,8 +96,10 @@ public class UserJdbcDAO implements UserDAO {
                         resultSet.getString("firstName"),
                         resultSet.getString("secondName"),
                         resultSet.getString("email"),
-                        resultSet.getString("password"));
+                        resultSet.getString("password"),
+                        resultSet.getString("role"));
             }
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -102,15 +109,17 @@ public class UserJdbcDAO implements UserDAO {
     @Override
     public boolean updateUser(User user) {
         boolean result = false;
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE user_table SET firstName = ?, secondName = ?, email = ?, password = ?  WHERE id = ?")) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE user_table SET firstName = ?, secondName = ?, email = ?, password = ?, role = ?" +
+                             "  WHERE id = ?")) {
             statement.setString(1, user.getFirstName());
             statement.setString(2, user.getSecondName());
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getPassword());
-            statement.setLong(5, user.getId());
+            statement.setString(5, user.getRole());
+            statement.setLong(6, user.getId());
             result = statement.executeUpdate() == 1;
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -120,8 +129,7 @@ public class UserJdbcDAO implements UserDAO {
     @Override
     public User getUserByEmailAndPassword(String email, String password) {
         User user = null;
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
+        try (PreparedStatement statement = connection.prepareStatement(
                      "SELECT * FROM user_table WHERE email = ? AND password = ?")) {
             statement.setString(1, email);
             statement.setString(2, password);
@@ -131,8 +139,10 @@ public class UserJdbcDAO implements UserDAO {
                         resultSet.getString("firstName"),
                         resultSet.getString("secondName"),
                         resultSet.getString("email"),
-                        resultSet.getString("password"));
+                        resultSet.getString("password"),
+                        resultSet.getString("role"));
             }
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -142,13 +152,13 @@ public class UserJdbcDAO implements UserDAO {
     @Override
     public boolean validationUser(String email, String password) {
         boolean result = false;
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
+        try (PreparedStatement statement = connection.prepareStatement(
                      "SELECT password FROM user_table WHERE email = ?")) {
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             result = resultSet.getString("password").equals(password);
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }

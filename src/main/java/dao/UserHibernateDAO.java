@@ -1,33 +1,31 @@
 package dao;
 
-import dao.factories.DAOHibernateFactory;
 import models.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.util.List;
 
 public class UserHibernateDAO implements UserDAO {
     private static UserHibernateDAO userHibernateDAO;
+    private SessionFactory sessionFactory;
 
-    private UserHibernateDAO() {
+    private UserHibernateDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
-    public static UserHibernateDAO getInstance() {
+    public static UserHibernateDAO getInstance(SessionFactory sessionFactory) {
         if (userHibernateDAO == null) {
-            userHibernateDAO = new UserHibernateDAO();
+            userHibernateDAO = new UserHibernateDAO(sessionFactory);
         }
         return userHibernateDAO;
     }
 
-    private Session getSession(){
-      return DAOHibernateFactory.getSession();
-    }
-
     @Override
     public List<User> getAllUser() {
-        Session session = getSession();
+        Session session = sessionFactory.openSession();
         List<User> userList = session.createQuery("FROM User").list();
         session.close();
         return userList;
@@ -35,7 +33,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public boolean addUser(User user) {
-        Session session = getSession();
+        Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         long id = (long) session.save(user);
         transaction.commit();
@@ -45,7 +43,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public boolean deleteUserByID(long id) {
-        Session session = getSession();
+        Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         Query query = session.createQuery("DELETE FROM User WHERE id=:paramID");
         query.setParameter("paramID", id);
@@ -57,7 +55,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public User getUserByID(long id) {
-        Session session = getSession();
+        Session session = sessionFactory.openSession();
         Query query = session.createQuery("FROM User WHERE id=:paramID");
         query.setParameter("paramID", id);
         User user = (User) query.uniqueResult();
@@ -68,7 +66,7 @@ public class UserHibernateDAO implements UserDAO {
     @Override
     public boolean updateUser(User user) {
         boolean result = false;
-        Session session = getSession();
+        Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         try {
             session.update(user);
@@ -83,7 +81,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public User getUserByEmailAndPassword(String email, String password) {
-        Session session = getSession();
+        Session session = sessionFactory.openSession();
         Query query = session.createQuery("FROM User WHERE email=:paramEmail AND password=:paramPassword ");
         query.setParameter("paramEmail", email);
         query.setParameter("paramPassword", password);
@@ -95,7 +93,7 @@ public class UserHibernateDAO implements UserDAO {
     @Override
     public boolean validationUser(String email, String password) {
         boolean result = false;
-        Session session = getSession();
+        Session session = sessionFactory.openSession();
         Query query = session.createQuery("FROM User WHERE email=:paramEmail");
         query.setParameter("paramEmail", email);
         User user = (User) query.uniqueResult();

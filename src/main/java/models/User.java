@@ -3,6 +3,7 @@ package models;
 import javax.persistence.*;
 import java.util.Objects;
 
+
 @Entity
 @Table(name = "user_table")
 public class User {
@@ -13,24 +14,28 @@ public class User {
     private String secondName;
     private String email;
     private String password;
+    private String role;
 
     public User() {
     }
 
-    public User(Long id, String firstName, String secondName, String email, String password) {
+    public User(long id, String firstName, String secondName, String email, String password, String role) {
         this.id = id;
         this.firstName = firstName;
         this.secondName = secondName;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
-    public User(String firstName, String secondName, String email, String password) {
+    public User(String firstName, String secondName, String email, String password, String role) {
         this.firstName = firstName;
         this.secondName = secondName;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
+
 
     public long getId() {
         return id;
@@ -72,6 +77,13 @@ public class User {
         this.email = email;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -81,11 +93,24 @@ public class User {
         return Objects.equals(firstName, user.firstName) &&
                 Objects.equals(secondName, user.secondName) &&
                 Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password);
+                Objects.equals(password, user.password) &&
+                Objects.equals(role, user.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, secondName, email, password);
+        return Objects.hash(firstName, secondName, email, password, role);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", secondName='" + secondName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

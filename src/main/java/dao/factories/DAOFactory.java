@@ -1,5 +1,6 @@
 package dao.factories;
 
+
 import dao.UserDAO;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.util.Properties;
 public abstract class DAOFactory {
     private static String daoType;
     private static DAOFactory DAOFactory;
+    public abstract UserDAO getUserDao();
 
     private static String getDaoType() {
         Properties properties = new Properties();
@@ -30,7 +32,5 @@ public abstract class DAOFactory {
         }
         return DAOFactory;
     }
-
-    public abstract UserDAO getUserDao();
 
 }
